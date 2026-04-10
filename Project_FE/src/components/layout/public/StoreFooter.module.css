@@ -1,0 +1,126 @@
+/* ===== StoreFooter.module.css ===== */
+
+.footer {
+  background: #fff;
+  border-top: 1px solid #e2e8f0;
+  padding: 48px 24px;
+}
+
+.footerInner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 32px;
+}
+
+@media (max-width: 768px) {
+  .footerInner {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Column headings */
+.colTitle {
+  font-weight: 800;
+  font-size: 13px;
+  color: #1e293b;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 16px;
+}
+
+/* Col 1 - Company info */
+.companyInfo {
+  font-size: 13px;
+  color: #64748b;
+  line-height: 2;
+}
+
+.socialRow {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.socialIcon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 14px;
+  color: #fff;
+}
+
+.socialFacebook { background: #1877f2; }
+.socialYoutube  { background: #ff0000; font-size: 13px; }
+.socialTiktok   { background: #000000; font-size: 11px; }
+
+/* Col 2 & 3 - Lists */
+.linkList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  line-height: 2.2;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.linkItem a {
+  color: #64748b;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.linkItem a:hover {
+  color: #1d4ed8;
+}
+
+/* Col 4 - Hotline + stores */
+.hotlineBox {
+  background: #1d4ed8;
+  border-radius: 10px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: #fff;
+  margin-bottom: 24px;
+}
+
+.hotlineIcon {
+  font-size: 28px;
+}
+
+.hotlineLabel {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.hotlineNumber {
+  font-size: 20px;
+  font-weight: 900;
+}
+
+.storeInfo {
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.9;
+}
+
+.storeName {
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 2px;
+}
+
+.storeNameSecond {
+  font-weight: 700;
+  color: #1e293b;
+  margin: 10px 0 2px;
+}

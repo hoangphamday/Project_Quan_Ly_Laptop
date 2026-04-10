@@ -1,0 +1,49 @@
+/* ===== StoreNavbar.module.css ===== */
+
+.navWrapper {
+  background: linear-gradient(90deg, #1e3a8a 0%, #1d4ed8 60%, #2563eb 100%);
+}
+
+.navInner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.navBtn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 100%;
+  padding: 0 80px;
+  background: transparent;
+  color: #fff;
+  border: none;
+  border-bottom: 3px solid transparent;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s, border-bottom 0.2s;
+  white-space: nowrap;
+}
+
+.navBtn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-bottom: 3px solid #fff;
+}
+
+.navBtnActive {
+  background: rgba(255, 255, 255, 0.18);
+  border-bottom: 3px solid #fff;
+}
+
+.navIcon {
+  font-size: 16px;
+  opacity: 0.9;
+}

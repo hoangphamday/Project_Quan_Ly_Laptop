@@ -1,0 +1,178 @@
+/* ===== StoreHeader.module.css ===== */
+
+/* Wrapper */
+.headerWrapper {
+  background-color: #ffffff;
+}
+
+.headerInner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Logo */
+.logo {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: opacity 0.2s;
+}
+
+.logo:hover {
+  opacity: 0.85;
+}
+
+.logoImg {
+  height: 56px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* Search */
+.searchBox {
+  flex: 1;
+  max-width: 540px;
+  margin: 0 40px;
+}
+
+.searchInner {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  border: 2px solid #1d4ed8;
+  border-radius: 999px;
+  background: #fff;
+}
+
+.searchInput {
+  height: 44px;
+  font-size: 15px;
+  padding-left: 20px;
+  background: transparent;
+}
+
+.searchBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1d4ed8;
+  border: none;
+  width: 56px;
+  height: 44px;
+  cursor: pointer;
+  color: #fff;
+  font-size: 20px;
+  border-radius: 0 999px 999px 0;
+  flex-shrink: 0;
+  transition: background-color 0.2s;
+}
+
+.searchBtn:hover {
+  background-color: #1e40af;
+}
+
+/* Right icons area */
+.rightIcons {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.iconGroup {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.iconBubble {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  width: 46px;
+  height: 46px;
+  font-size: 20px;
+  transition: transform 0.2s;
+}
+
+.iconGroup:hover .iconBubble {
+  transform: scale(1.1);
+}
+
+.iconBubbleRed {
+  background: #fef2f2;
+  color: #dc2626;
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.15);
+}
+
+.iconBubbleBlue {
+  background: #eff6ff;
+  color: #1d4ed8;
+  box-shadow: 0 2px 8px rgba(29, 78, 216, 0.12);
+}
+
+.iconBubbleGray {
+  background: #f1f5f9;
+  color: #475569;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.iconGroup:hover .iconBubbleGray {
+  background: #1e293b;
+  color: #fff;
+}
+
+.iconLabel {
+  display: flex;
+  flex-direction: column;
+}
+
+.iconLabelTop {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.iconLabelBottom {
+  font-size: 14px;
+  font-weight: 800;
+  color: #1e293b;
+  line-height: 1.3;
+  transition: color 0.2s;
+}
+
+.iconGroup:hover .iconLabelBottomRed {
+  color: #dc2626;
+}
+
+.iconGroup:hover .iconLabelBottomBlue {
+  color: #1d4ed8;
+}
+
+.hotlineLabelBottom {
+  font-size: 17px;
+  font-weight: 900;
+  color: #1e293b;
+  line-height: 1.3;
+  transition: color 0.2s;
+}
+
+.iconGroup:hover .hotlineLabelBottom {
+  color: #dc2626;
+}
+
+/* Divider */
+.divider {
+  width: 1px;
+  height: 40px;
+  background: #e2e8f0;
+}
