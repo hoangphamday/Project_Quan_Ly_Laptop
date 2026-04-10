@@ -1,0 +1,22 @@
+﻿  Determining projects to restore...
+  All projects are up-to-date for restore.
+  Models -> d:\CN WED\Project_BE\Project_BE\Models\bin\Debug\net8.0\Models.dll
+  DAL -> d:\CN WED\Project_BE\Project_BE\DAL\bin\Debug\net8.0\DAL.dll
+  BLL -> d:\CN WED\Project_BE\Project_BE\BLL\bin\Debug\net8.0\BLL.dll
+d:\CN WED\Project_BE\Project_BE\API_Admin\Program.cs(31,40): error CS0246: The type or namespace name 'AppSettings' could not be found (are you missing a using directive or an assembly reference?) [d:\CN WED\Project_BE\Project_BE\API_Admin\API_Admin.csproj]
+d:\CN WED\Project_BE\Project_BE\API_Admin\Program.cs(33,54): error CS0246: The type or namespace name 'AppSettings' could not be found (are you missing a using directive or an assembly reference?) [d:\CN WED\Project_BE\Project_BE\API_Admin\API_Admin.csproj]
+d:\CN WED\Project_BE\Project_BE\API_Admin\Program.cs(58,51): error CS1503: Argument 1: cannot convert from 'string' to 'Microsoft.Extensions.Configuration.IConfiguration' [d:\CN WED\Project_BE\Project_BE\API_Admin\API_Admin.csproj]
+d:\CN WED\Project_BE\Project_BE\API_Admin\Program.cs(55,39): warning CS8600: Converting null literal or possible null value to non-nullable type. [d:\CN WED\Project_BE\Project_BE\API_Admin\API_Admin.csproj]
+
+Build FAILED.
+
+d:\CN WED\Project_BE\Project_BE\API_Admin\Program.cs(55,39): warning CS8600: Converting null literal or possible null value to non-nullable type. [d:\CN WED\Project_BE\Project_BE\API_Admin\API_Admin.csproj]
+d:\CN WED\Project_BE\Project_BE\API_Admin\Program.cs(31,40): error CS0246: The type or namespace name 'AppSettings' could not be found (are you missing a using directive or an assembly reference?) [d:\CN WED\Project_BE\Project_BE\API_Admin\API_Admin.csproj]
+d:\CN WED\Project_BE\Project_BE\API_Admin\Program.cs(33,54): error CS0246: The type or namespace name 'AppSettings' could not be found (are you missing a using directive or an assembly reference?) [d:\CN WED\Project_BE\Project_BE\API_Admin\API_Admin.csproj]
+d:\CN WED\Project_BE\Project_BE\API_Admin\Program.cs(58,51): error CS1503: Argument 1: cannot convert from 'string' to 'Microsoft.Extensions.Configuration.IConfiguration' [d:\CN WED\Project_BE\Project_BE\API_Admin\API_Admin.csproj]
+    1 Warning(s)
+    3 Error(s)
+
+Time Elapsed 00:00:01.12
+
+Workload updates are available. Run `dotnet workload list` for more information.
