@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\CN WED\\Project_Laptop\\Project_BE\\Project_BE\\Models\\Models.csproj": {}
+    "D:\\CN WED\\Project_Laptop\\Project_BE\\Models\\Models.csproj": {}
   },
   "projects": {
-    "D:\\CN WED\\Project_Laptop\\Project_BE\\Project_BE\\Models\\Models.csproj": {
+    "D:\\CN WED\\Project_Laptop\\Project_BE\\Models\\Models.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\CN WED\\Project_Laptop\\Project_BE\\Project_BE\\Models\\Models.csproj",
+        "projectUniqueName": "D:\\CN WED\\Project_Laptop\\Project_BE\\Models\\Models.csproj",
         "projectName": "Models",
-        "projectPath": "D:\\CN WED\\Project_Laptop\\Project_BE\\Project_BE\\Models\\Models.csproj",
+        "projectPath": "D:\\CN WED\\Project_Laptop\\Project_BE\\Models\\Models.csproj",
         "packagesPath": "C:\\Users\\ADMIN\\.nuget\\packages\\",
-        "outputPath": "D:\\CN WED\\Project_Laptop\\Project_BE\\Project_BE\\Models\\obj\\",
+        "outputPath": "D:\\CN WED\\Project_Laptop\\Project_BE\\Models\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\ADMIN\\AppData\\Roaming\\NuGet\\NuGet.Config",

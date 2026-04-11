@@ -1813,11 +1813,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\CN WED\\Project_Laptop\\Project_BE\\Project_BE\\DAL\\DAL.csproj",
+      "projectUniqueName": "D:\\CN WED\\Project_Laptop\\Project_BE\\DAL\\DAL.csproj",
       "projectName": "DAL",
-      "projectPath": "D:\\CN WED\\Project_Laptop\\Project_BE\\Project_BE\\DAL\\DAL.csproj",
+      "projectPath": "D:\\CN WED\\Project_Laptop\\Project_BE\\DAL\\DAL.csproj",
       "packagesPath": "C:\\Users\\ADMIN\\.nuget\\packages\\",
-      "outputPath": "D:\\CN WED\\Project_Laptop\\Project_BE\\Project_BE\\DAL\\obj\\",
+      "outputPath": "D:\\CN WED\\Project_Laptop\\Project_BE\\DAL\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\ADMIN\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -1835,8 +1835,8 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "D:\\CN WED\\Project_Laptop\\Project_BE\\Project_BE\\Models\\Models.csproj": {
-              "projectPath": "D:\\CN WED\\Project_Laptop\\Project_BE\\Project_BE\\Models\\Models.csproj"
+            "D:\\CN WED\\Project_Laptop\\Project_BE\\Models\\Models.csproj": {
+              "projectPath": "D:\\CN WED\\Project_Laptop\\Project_BE\\Models\\Models.csproj"
             }
           }
         }

@@ -1,0 +1,41 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\CN WED\\Project_Laptop\\Project_BE\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{BD756331-0DD3-49D9-ADB7-63E07F1C3481}|API_Gateway\\API_Gateway.csproj|d:\\cn wed\\project_laptop\\project_be\\api_gateway\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{BD756331-0DD3-49D9-ADB7-63E07F1C3481}|API_Gateway\\API_Gateway.csproj|solutionrelative:api_gateway\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "D:\\CN WED\\Project_Laptop\\Project_BE\\API_Gateway\\appsettings.json",
+              "RelativeDocumentMoniker": "API_Gateway\\appsettings.json",
+              "ToolTip": "D:\\CN WED\\Project_Laptop\\Project_BE\\API_Gateway\\appsettings.json",
+              "RelativeToolTip": "API_Gateway\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-04-11T08:22:20.451Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
