@@ -21,5 +21,8 @@ namespace Models
         public int BaoHanh { get; set; }
         public string MoTa { get; set; }
         public DateTime NgayThem { get; set; }
+
+        // Ảnh đại diện – JOIN từ bảng HinhAnhLaptop trong sp_Laptop_GetAll
+        public string DuongDanAnh { get; set; }
     }
 }

@@ -8,7 +8,7 @@ import { flashSaleProducts, officeProducts, gamingProducts, graphicsProducts, ma
 
 import { Link } from 'react-router-dom';
 
-const ProductCard = ({ product, showStock = false }: { product: any, showStock?: boolean }) => (
+export const ProductCard = ({ product, showStock = false }: { product: any, showStock?: boolean }) => (
   <Link to={`/product/${product.id}`} className="block h-full group">
     <Card
       bordered={true}

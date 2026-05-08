@@ -2,15 +2,41 @@ import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Button, Tag, Rate, Divider } from 'antd';
 import { ShoppingCartOutlined, CreditCardOutlined, SafetyCertificateOutlined, SwapOutlined } from '@ant-design/icons';
+import { useCart } from '../../app/CartContext';
 
 import { getAllProducts } from './mockData';
 
 export const ProductDetail: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { addToCart } = useCart();
 
-  const allProducts = getAllProducts();
-  const product = allProducts.find(p => p.id === Number(id));
+  let product: any = null;
+
+  // 1. Cố gắng tìm trong localStorage trước (cho các sản phẩm có maLaptop dạng chuỗi)
+  const stored = localStorage.getItem('all_products');
+  if (stored) {
+    try {
+      const allProducts = JSON.parse(stored);
+      const found = allProducts.find((p: any) => p.maLaptop === id);
+      if (found) {
+        product = {
+          id: found.maLaptop,
+          name: found.tenLaptop,
+          image: found.duongDanAnh || 'https://via.placeholder.com/300x200?text=Laptop',
+          price: new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(found.gia || 0),
+          rawPrice: found.gia,
+          // Mô phỏng thêm dữ liệu để hiển thị đẹp
+        };
+      }
+    } catch (e) {}
+  }
+
+  // 2. Nếu không có trong localStorage, tìm trong mockData (cho các sản phẩm id dạng số)
+  if (!product) {
+    const allMockProducts = getAllProducts();
+    product = allMockProducts.find(p => p.id === Number(id) || String(p.id) === id);
+  }
 
   if (!product) {
     return (
@@ -130,6 +156,7 @@ export const ProductDetail: React.FC = () => {
                 size="large"
                 className="flex-1 h-14 bg-white border-2 border-blue-600 text-blue-600 hover:bg-blue-50 font-bold text-lg rounded-xl flex items-center justify-center gap-2"
                 icon={<ShoppingCartOutlined className="text-2xl" />}
+                onClick={() => addToCart(product)}
               >
                 THÊM GIỎ HÀNG
               </Button>
@@ -138,7 +165,10 @@ export const ProductDetail: React.FC = () => {
                 size="large"
                 className="flex-1 h-14 bg-red-600 hover:bg-red-500 font-bold text-lg rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-red-200 border-none"
                 icon={<CreditCardOutlined className="text-xl" />}
-                onClick={() => navigate('/cart')}
+                onClick={() => {
+                  addToCart(product);
+                  navigate('/cart');
+                }}
               >
                 MUA NGAY
               </Button>

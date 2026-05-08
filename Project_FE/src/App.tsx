@@ -11,12 +11,15 @@ import { Dashboard } from './features/dashboard/Dashboard';
 import { ProductList } from './features/products/ProductList';
 import { Storefront } from './features/storefront/Storefront';
 import { ProductDetail } from './features/storefront/ProductDetail';
+import { SearchResults } from './features/storefront/SearchResults';
 import { Login } from './features/auth/Login';
 import { OrderList } from './features/orders/OrderList';
 import { CustomerList } from './features/customers/CustomerList';
 import { Settings } from './features/settings/Settings';
 import { SupplierList } from './features/suppliers/SupplierList';
 import { ImportList } from './features/imports/ImportList';
+import { AccountList } from './features/accounts/AccountList';
+import { Cart } from './features/cart/Cart';
 
 // Main App Component
 const App: React.FC = () => {
@@ -48,6 +51,8 @@ const App: React.FC = () => {
             <Route index element={<Storefront />} />
             <Route path="store/laptops" element={<Storefront />} />
             <Route path="product/:id" element={<ProductDetail />} />
+            <Route path="search" element={<SearchResults />} />
+            <Route path="cart" element={<Cart />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
 
@@ -62,6 +67,7 @@ const App: React.FC = () => {
             <Route path="customers" element={<CustomerList />} />
             <Route path="suppliers" element={<SupplierList />} />
             <Route path="imports" element={<ImportList />} />
+            <Route path="accounts" element={<AccountList />} />
             <Route path="settings" element={<Settings />} />
           </Route>
         </Routes>

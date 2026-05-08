@@ -8,6 +8,7 @@ namespace DAL.Interfaces
     {
         bool Create(DonHang donHang);
         bool AddDetail(ChiTietDonHang chiTiet);
+        List<DonHang> GetAll();
         List<DonHang> GetByKH(string maKH);
         bool UpdateTrangThai(string maDonHang, string trangThai);
     }

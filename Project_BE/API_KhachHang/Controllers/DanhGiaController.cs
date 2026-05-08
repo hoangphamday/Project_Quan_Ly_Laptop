@@ -17,7 +17,7 @@ namespace API_KhachHang.Controllers
             _danhGiaService = danhGiaService;
         }
 
-        [HttpPost]
+        [HttpPost("create")]
         public IActionResult Create([FromBody] DanhGia danhGia)
         {
             bool result = _danhGiaService.Create(danhGia);

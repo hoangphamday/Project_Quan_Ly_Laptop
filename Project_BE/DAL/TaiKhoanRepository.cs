@@ -36,5 +36,31 @@ namespace DAL
 
             return dt.ConvertTo<TaiKhoan>().FirstOrDefault();
         }
+
+        public List<TaiKhoan> GetAll()
+        {
+            var dt = _dbHelper.ExecuteSProcedureReturnDataTable(out string msgError, "sp_TaiKhoan_GetAll");
+            if (!string.IsNullOrEmpty(msgError) || dt == null || dt.Rows.Count == 0)
+                return new List<TaiKhoan>();
+            return dt.ConvertTo<TaiKhoan>().ToList();
+        }
+
+        // Cập nhật vai trò và trạng thái tài khoản
+        public bool Update(TaiKhoan tk)
+        {
+            string msgError = _dbHelper.ExecuteSProcedure("sp_TaiKhoan_Update",
+                "@MaTK",      tk.MaTK,
+                "@Role",      tk.Role,
+                "@TrangThai", tk.TrangThai);
+            return string.IsNullOrEmpty(msgError);
+        }
+
+        // Xóa tài khoản theo mã
+        public bool Delete(string maTK)
+        {
+            string msgError = _dbHelper.ExecuteSProcedure("sp_TaiKhoan_Delete",
+                "@MaTK", maTK);
+            return string.IsNullOrEmpty(msgError);
+        }
     }
 }

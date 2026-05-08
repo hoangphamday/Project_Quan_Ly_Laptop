@@ -17,7 +17,13 @@ namespace API_Admin.Controllers
             _donHangService = donHangService;
         }
 
-        [HttpPost]
+        [HttpGet("get-all")]
+        public IActionResult GetAll()
+        {
+            return Ok(_donHangService.GetAll());
+        }
+
+        [HttpPost("create")]
         public IActionResult Create([FromBody] DonHang donHang)
         {
             bool result = _donHangService.Create(donHang);
@@ -25,7 +31,7 @@ namespace API_Admin.Controllers
             return BadRequest(new { message = "Thêm thất bại" });
         }
 
-        [HttpPost("AddDetail")]
+        [HttpPost("add-detail")]
         public IActionResult AddDetail([FromBody] ChiTietDonHang chiTiet)
         {
             bool result = _donHangService.AddDetail(chiTiet);
@@ -33,10 +39,21 @@ namespace API_Admin.Controllers
             return BadRequest(new { message = "Thêm chi tiết thất bại" });
         }
 
-        [HttpGet("getByKH/{khachHangId}")]
+        [HttpGet("get-by-kh/{khachHangId}")]
         public IActionResult GetByKH(string khachHangId)
         {
             return Ok(_donHangService.GetByKH(khachHangId));
+        }
+
+        [HttpPut("{maDonHang}/trangthai")]
+        public IActionResult UpdateTrangThai(string maDonHang, [FromBody] string trangThai)
+        {
+            if (string.IsNullOrEmpty(trangThai)) return BadRequest(new { message = "Trạng thái không được để trống" });
+            
+            bool result = _donHangService.UpdateTrangThai(maDonHang, trangThai);
+            if (result) return Ok(new { message = "Cập nhật trạng thái thành công" });
+            
+            return BadRequest(new { message = "Cập nhật trạng thái thất bại" });
         }
     }
 }

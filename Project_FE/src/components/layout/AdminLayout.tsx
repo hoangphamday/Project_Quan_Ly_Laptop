@@ -14,6 +14,7 @@ import {
   FileTextOutlined
 } from '@ant-design/icons';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../../app/AuthContext';
 
 const { Header, Sider, Content } = Layout;
 
@@ -21,16 +22,53 @@ export const AdminLayout: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const { user, logout } = useAuth();
 
-  const menuItems = [
+  let menuItems = [
     { key: '/admin', icon: <BarChartOutlined />, label: 'Tổng quan' },
     { key: '/admin/laptops', icon: <LaptopOutlined />, label: 'Sản phẩm' },
     { key: '/admin/orders', icon: <ShoppingCartOutlined />, label: 'Đơn hàng' },
     { key: '/admin/customers', icon: <UserOutlined />, label: 'Khách hàng' },
     { key: '/admin/suppliers', icon: <BankOutlined />, label: 'Nhà cung cấp' },
     { key: '/admin/imports', icon: <FileTextOutlined />, label: 'Nhập hàng' },
+    { key: '/admin/accounts', icon: <UserOutlined />, label: 'Tài khoản' },
     { key: '/admin/settings', icon: <SettingOutlined />, label: 'Cài đặt' },
   ];
+
+  // NhanVien chỉ được dùng các chức năng trong API_NhanVien
+  if (user?.role === 'NhanVien') {
+    menuItems = [
+      { key: '/admin/laptops', icon: <LaptopOutlined />, label: 'Sản phẩm' },
+      { key: '/admin/orders', icon: <ShoppingCartOutlined />, label: 'Đơn hàng' },
+      { key: '/admin/customers', icon: <UserOutlined />, label: 'Khách hàng' },
+      { key: '/admin/imports', icon: <FileTextOutlined />, label: 'Nhập hàng' },
+    ];
+  }
+
+  const handleMenuClick = ({ key }: { key: string }) => {
+    if (key === 'logout') {
+      logout();
+      navigate('/login');
+    } else if (key === 'home') {
+      navigate('/');
+    } else if (key === 'admin-home') {
+      navigate('/admin');
+    }
+  };
+
+  // Dropdown items theo role
+  const dropdownItems = user?.role === 'Admin'
+    ? [
+        { key: 'home', label: 'Về trang chủ' },
+        { key: 'divider', type: 'divider' as const },
+        { key: 'logout', label: 'Đăng xuất', danger: true },
+      ]
+    : [
+        { key: 'home', label: 'Về trang chủ' },
+        { key: 'divider', type: 'divider' as const },
+        { key: 'logout', label: 'Đăng xuất', danger: true },
+      ];
+
 
   return (
     <Layout className="min-h-screen bg-slate-50">
@@ -97,18 +135,16 @@ export const AdminLayout: React.FC = () => {
             </Badge>
             
             <Dropdown menu={{
-              items: [
-                { key: '1', label: 'Tài khoản' },
-                { key: '2', label: 'Cài đặt' },
-                { type: 'divider' },
-                { key: '3', label: 'Đăng xuất', danger: true },
-              ]
+              items: dropdownItems,
+              onClick: handleMenuClick
             }} trigger={['click']}>
               <div className="flex items-center gap-3 cursor-pointer hover:bg-slate-50 p-1.5 rounded-lg transition-colors">
-                <Avatar style={{ backgroundColor: '#1677ff' }} icon={<UserOutlined />} />
+                <Avatar style={{ backgroundColor: user?.role === 'Admin' ? '#ef4444' : '#7c3aed' }} icon={<UserOutlined />} />
                 <div className="hidden md:block">
-                  <div className="text-sm font-medium text-slate-700 leading-tight">Admin Hoàng</div>
-                  <div className="text-xs text-slate-500">Quản trị viên</div>
+                  <div className="text-sm font-medium text-slate-700 leading-tight">
+                    {user?.role === 'Admin' ? 'Admin' : (user?.fullName || user?.tenDangNhap || 'Nhân viên')}
+                  </div>
+                  <div className="text-xs text-slate-500">{user?.role === 'Admin' ? 'Quản trị viên' : 'Nhân viên'}</div>
                 </div>
               </div>
             </Dropdown>

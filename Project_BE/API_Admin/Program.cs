@@ -90,13 +90,12 @@ namespace API_Admin
                 // Thêm cấu hình UI JWT Token
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
-                    Description = @"JWT Authorization header using the Bearer scheme. 
-                      Enter 'Bearer' [space] and then your token.
-                      Example: 'Bearer 12345abcdef'",
+                    Description = "Nhập JWT token vào đây (KHÔNG cần gõ 'Bearer', chỉ paste token thôi).\r\nVí dụ: eyJhbGci...",
                     Name = "Authorization",
                     In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.ApiKey,
-                    Scheme = "Bearer"
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer",
+                    BearerFormat = "JWT"
                 });
 
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement()

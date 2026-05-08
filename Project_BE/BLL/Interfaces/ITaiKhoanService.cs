@@ -8,5 +8,8 @@ namespace BLL.Interfaces
     {
         bool Register(TaiKhoan tk);
         TaiKhoan Login(string username, string password);
+        List<TaiKhoan> GetAll();
+        bool Update(TaiKhoan tk);
+        bool Delete(string maTK);
     }
 }

@@ -17,7 +17,7 @@ namespace API_KhachHang.Controllers
             _donHangService = donHangService;
         }
 
-        [HttpPost]
+        [HttpPost("create")]
         public IActionResult Create([FromBody] DonHang donHang)
         {
             bool result = _donHangService.Create(donHang);
@@ -25,13 +25,13 @@ namespace API_KhachHang.Controllers
             return BadRequest(new { message = "Đặt hàng thất bại" });
         }
 
-        [HttpGet("LichSu/{maKH}")]
+        [HttpGet("lich-su/{maKH}")]
         public IActionResult LichSu(string maKH)
         {
             return Ok(_donHangService.GetByKH(maKH));
         }
 
-        [HttpPost("AddDetail")]
+        [HttpPost("add-detail")]
         public IActionResult AddDetail([FromBody] ChiTietDonHang chiTiet)
         {
             bool result = _donHangService.AddDetail(chiTiet);

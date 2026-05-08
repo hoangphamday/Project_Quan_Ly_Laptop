@@ -1,56 +1,83 @@
-import React from 'react';
-import { Card, Table, Tag, Button, Input, Avatar, Space, Typography, Tooltip } from 'antd';
-import { SearchOutlined, UserOutlined, EditOutlined, StopOutlined, PlusOutlined } from '@ant-design/icons';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Card, Table, Tag, Button, Input, Avatar, Space, Typography, Tooltip, Spin, Alert } from 'antd';
+import { SearchOutlined, UserOutlined, ReloadOutlined } from '@ant-design/icons';
+import { customerService } from '../../services/customerService';
+import type { KhachHang } from '../../types';
 
 const { Title, Text } = Typography;
 
-const mockCustomers = [
-  { id: 'CUS-001', name: 'Nguyễn Văn A', email: 'nguyenvana@gmail.com', phone: '0901234567', totalOrders: 5, totalSpent: '150.000.000đ', status: 'Active', avatar: 'https://i.pravatar.cc/150?u=1' },
-  { id: 'CUS-002', name: 'Trần Thị B', email: 'tranthib@gmail.com', phone: '0912345678', totalOrders: 2, totalSpent: '45.000.000đ', status: 'Active', avatar: 'https://i.pravatar.cc/150?u=2' },
-  { id: 'CUS-003', name: 'Lê Hoàng C', email: 'lehoangc@gmail.com', phone: '0987654321', totalOrders: 0, totalSpent: '0đ', status: 'Inactive', avatar: 'https://i.pravatar.cc/150?u=3' },
-  { id: 'CUS-004', name: 'Phạm Văn D', email: 'phamvand@gmail.com', phone: '0976543210', totalOrders: 12, totalSpent: '320.500.000đ', status: 'Active', avatar: 'https://i.pravatar.cc/150?u=4' },
-  { id: 'CUS-005', name: 'Đỗ Thị E', email: 'dothie@gmail.com', phone: '0965432109', totalOrders: 1, totalSpent: '35.000.000đ', status: 'Blocked', avatar: 'https://i.pravatar.cc/150?u=5' },
-];
-
 export const CustomerList: React.FC = () => {
+  const [customers, setCustomers] = useState<KhachHang[]>([]);
+  const [filtered, setFiltered] = useState<KhachHang[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [searchText, setSearchText] = useState('');
+
+  const fetchCustomers = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await customerService.getAll();
+      setCustomers(data);
+      setFiltered(data);
+    } catch (err: any) {
+      setError(err?.response?.data?.message || 'Không thể tải danh sách khách hàng.');
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => { fetchCustomers(); }, [fetchCustomers]);
+
+  useEffect(() => {
+    if (!searchText.trim()) { setFiltered(customers); return; }
+    const kw = searchText.toLowerCase();
+    setFiltered(
+      customers.filter(
+        (c) =>
+          c.tenKH.toLowerCase().includes(kw) ||
+          c.email?.toLowerCase().includes(kw) ||
+          c.dienThoai?.includes(kw)
+      )
+    );
+  }, [searchText, customers]);
+
   const columns = [
     {
       title: 'Khách hàng',
       key: 'customer',
-      render: (_: any, record: any) => (
+      render: (_: any, record: KhachHang) => (
         <div className="flex items-center gap-3">
-          <Avatar src={record.avatar} size="large" icon={<UserOutlined />} />
+          <Avatar size="large" icon={<UserOutlined />} />
           <div>
-            <div className="font-semibold text-slate-800">{record.name}</div>
-            <div className="text-sm text-slate-500">{record.email}</div>
+            <div className="font-semibold text-slate-800">{record.tenKH}</div>
+            <div className="text-sm text-slate-500">{record.email || '—'}</div>
           </div>
         </div>
       ),
     },
-    { title: 'Số điện thoại', dataIndex: 'phone', key: 'phone' },
-    { title: 'Đơn hàng', dataIndex: 'totalOrders', key: 'totalOrders', align: 'center' as const },
-    { title: 'Tổng chi tiêu', dataIndex: 'totalSpent', key: 'totalSpent', align: 'right' as const, render: (val: string) => <span className="font-semibold">{val}</span> },
+    { title: 'Mã KH', dataIndex: 'maKH', key: 'maKH', render: (v: string) => <span className="text-xs font-mono text-slate-400">{v}</span> },
+    { title: 'Số điện thoại', dataIndex: 'dienThoai', key: 'dienThoai', render: (v: string) => v || '—' },
+    { title: 'Địa chỉ', dataIndex: 'diaChi', key: 'diaChi', render: (v: string) => <span className="text-sm text-slate-500">{v || '—'}</span> },
+    {
+      title: 'Ngày đăng ký',
+      dataIndex: 'ngayDangKy',
+      key: 'ngayDangKy',
+      render: (v: string) => v ? new Date(v).toLocaleDateString('vi-VN') : '—',
+    },
     {
       title: 'Trạng thái',
-      dataIndex: 'status',
       key: 'status',
-      render: (status: string) => {
-        let color = status === 'Active' ? 'success' : status === 'Inactive' ? 'default' : 'error';
-        let text = status === 'Active' ? 'Hoạt động' : status === 'Inactive' ? 'Chưa mua' : 'Bị khóa';
-        return <Tag color={color} className="rounded-md px-2 py-0.5">{text}</Tag>;
-      },
+      render: () => <Tag color="success" className="rounded-md px-2 py-0.5">Hoạt động</Tag>,
     },
     {
       title: 'Hành động',
       key: 'actions',
       align: 'right' as const,
-      render: () => (
+      render: (_: any) => (
         <Space>
           <Tooltip title="Chỉnh sửa">
-            <Button type="text" icon={<EditOutlined className="text-blue-600" />} />
-          </Tooltip>
-          <Tooltip title="Khóa tài khoản">
-            <Button type="text" danger icon={<StopOutlined />} />
+            <Button type="text" icon={<UserOutlined className="text-blue-600" />} />
           </Tooltip>
         </Space>
       ),
@@ -64,25 +91,34 @@ export const CustomerList: React.FC = () => {
           <Title level={4} style={{ margin: 0, color: '#0f172a' }}>Danh sách Khách hàng</Title>
           <Text className="text-slate-500">Quản lý thông tin và lịch sử mua hàng của khách</Text>
         </div>
-        <Button type="primary" icon={<PlusOutlined />} className="bg-blue-600 rounded-lg h-10">Thêm khách hàng</Button>
+        <Tooltip title="Làm mới">
+          <Button icon={<ReloadOutlined />} onClick={fetchCustomers} loading={loading} className="h-10 rounded-lg" />
+        </Tooltip>
       </div>
 
-      <Card bordered={false} className="shadow-sm rounded-xl">
-        <div className="flex gap-4 mb-6">
-          <Input 
-            prefix={<SearchOutlined className="text-slate-400" />} 
-            placeholder="Tìm kiếm theo tên, email, SĐT..." 
-            className="max-w-md h-10 rounded-lg focus:border-blue-500 hover:border-blue-400"
+      {error && <Alert message={error} type="error" showIcon closable onClose={() => setError(null)} className="rounded-xl" />}
+
+      <Spin spinning={loading}>
+        <Card bordered={false} className="shadow-sm rounded-xl">
+          <div className="flex gap-4 mb-6">
+            <Input
+              prefix={<SearchOutlined className="text-slate-400" />}
+              placeholder="Tìm kiếm theo tên, email, SĐT..."
+              className="max-w-md h-10 rounded-lg focus:border-blue-500 hover:border-blue-400"
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              allowClear
+            />
+          </div>
+          <Table
+            columns={columns}
+            dataSource={filtered}
+            rowKey="maKH"
+            pagination={{ pageSize: 10 }}
+            className="custom-table"
           />
-        </div>
-        <Table 
-          columns={columns} 
-          dataSource={mockCustomers} 
-          rowKey="id"
-          pagination={{ pageSize: 10 }}
-          className="custom-table"
-        />
-      </Card>
+        </Card>
+      </Spin>
     </div>
   );
 };

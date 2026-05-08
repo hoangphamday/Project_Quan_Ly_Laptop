@@ -16,13 +16,13 @@ namespace API_NhanVien.Controllers
             _laptopService = laptopService;
         }
 
-        [HttpGet]
+        [HttpGet("get-all")]
         public IActionResult GetAll()
         {
             return Ok(_laptopService.GetAll());
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("get-by-id/{id}")]
         public IActionResult GetById(string id)
         {
             var result = _laptopService.GetById(id);

@@ -17,7 +17,7 @@ namespace API_NhanVien.Controllers
             _phieuNhapService = phieuNhapService;
         }
 
-        [HttpPost]
+        [HttpPost("create")]
         public IActionResult Create([FromBody] PhieuNhap phieuNhap)
         {
             bool result = _phieuNhapService.Create(phieuNhap);
@@ -25,7 +25,7 @@ namespace API_NhanVien.Controllers
             return BadRequest(new { message = "Nhập hàng thất bại" });
         }
 
-        [HttpPost("AddDetail")]
+        [HttpPost("add-detail")]
         public IActionResult AddDetail([FromBody] ChiTietPhieuNhap chiTiet)
         {
             bool result = _phieuNhapService.AddDetail(chiTiet);

@@ -18,7 +18,7 @@ namespace API_Admin.Controllers
         }
 
         // Method Duyệt chưa có store, admin tạm thời có quyền xóa
-        [HttpDelete("{id}")]
+        [HttpDelete("delete/{id}")]
         public IActionResult Delete(string id)
         {
             bool result = _danhGiaService.Delete(id);

@@ -19,11 +19,42 @@ CREATE PROC sp_TaiKhoan_Login
     @MatKhau VARCHAR(100)
 AS
 BEGIN
-    SELECT * 
-    FROM TaiKhoan
-    WHERE TenDangNhap = @TenDangNhap 
-      AND MatKhau = @MatKhau
-      AND TrangThai = 1
+    SELECT tk.*, 
+        CASE 
+            WHEN tk.Role = 'KhachHang' THEN kh.TenKH
+            WHEN tk.Role = 'NhanVien' THEN nv.TenNV
+            ELSE 'Admin'
+        END AS FullName,
+        kh.MaKH
+    FROM TaiKhoan tk
+    LEFT JOIN KhachHang kh ON tk.MaTK = kh.MaTK AND tk.Role = 'KhachHang'
+    LEFT JOIN NhanVien nv ON tk.MaTK = nv.MaTK AND tk.Role = 'NhanVien'
+    WHERE tk.TenDangNhap = @TenDangNhap 
+      AND tk.MatKhau = @MatKhau
+      AND tk.TrangThai = 1
+END
+GO
+
+-- Cập nhật vai trò và trạng thái tài khoản
+CREATE PROC sp_TaiKhoan_Update
+    @MaTK       NVARCHAR(50),
+    @Role       NVARCHAR(20),
+    @TrangThai  BIT
+AS
+BEGIN
+    UPDATE TaiKhoan
+    SET Role      = @Role,
+        TrangThai = @TrangThai
+    WHERE MaTK = @MaTK
+END
+GO
+
+-- Xóa tài khoản
+CREATE PROC sp_TaiKhoan_Delete
+    @MaTK NVARCHAR(50)
+AS
+BEGIN
+    DELETE FROM TaiKhoan WHERE MaTK = @MaTK
 END
 GO
 
@@ -61,7 +92,15 @@ GO
 CREATE PROC sp_Laptop_GetAll
 AS
 BEGIN
-    SELECT L.*, H.TenHang
+    -- Lấy tất cả laptop, kèm tên hãng và đường dẫn ảnh đại diện (ảnh đầu tiên)
+    SELECT
+        L.*,
+        H.TenHang,
+        (
+            SELECT TOP 1 DuongDanAnh
+            FROM HinhAnhLaptop
+            WHERE MaLaptop = L.MaLaptop
+        ) AS DuongDanAnh
     FROM Laptop L
     JOIN HangLaptop H ON L.MaHang = H.MaHang
 END
@@ -97,17 +136,39 @@ END
 GO
 
 CREATE PROC sp_Laptop_Update
-    @MaLaptop NVARCHAR(50),
-    @TenLaptop NVARCHAR(200),
-    @Gia DECIMAL(18,2),
-    @SoLuong INT
+    @MaLaptop   NVARCHAR(50),
+    @TenLaptop  NVARCHAR(200),
+    @Gia        DECIMAL(18,2),
+    @SoLuong    INT,
+    @DuongDanAnh NVARCHAR(255) = NULL   -- Đường dẫn ảnh, NULL = không đổi
 AS
 BEGIN
+    SET NOCOUNT ON;
+
+    -- Cập nhật thông tin laptop
     UPDATE Laptop
     SET TenLaptop = @TenLaptop,
-        Gia = @Gia,
-        SoLuong = @SoLuong
-    WHERE MaLaptop = @MaLaptop
+        Gia       = @Gia,
+        SoLuong   = @SoLuong
+    WHERE MaLaptop = @MaLaptop;
+
+    -- Cập nhật / thêm ảnh đại diện (nếu người dùng nhập đường dẫn ảnh)
+    IF @DuongDanAnh IS NOT NULL AND LTRIM(RTRIM(@DuongDanAnh)) <> ''
+    BEGIN
+        IF EXISTS (SELECT 1 FROM HinhAnhLaptop WHERE MaLaptop = @MaLaptop)
+        BEGIN
+            -- Đã có ảnh → cập nhật ảnh đầu tiên
+            UPDATE TOP(1) HinhAnhLaptop
+            SET DuongDanAnh = @DuongDanAnh
+            WHERE MaLaptop = @MaLaptop;
+        END
+        ELSE
+        BEGIN
+            -- Chưa có ảnh → thêm mới
+            INSERT INTO HinhAnhLaptop (MaHinh, MaLaptop, DuongDanAnh)
+            VALUES (NEWID(), @MaLaptop, @DuongDanAnh);
+        END
+    END
 END
 GO
 
@@ -209,10 +270,54 @@ CREATE PROC sp_DonHang_GetByKH
     @MaKH NVARCHAR(50)
 AS
 BEGIN
-    SELECT * FROM DonHang WHERE MaKH = @MaKH
+    SELECT 
+        dh.MaDonHang,
+        dh.NgayDat,
+        dh.TongTien,
+        dh.TrangThai,
+
+        l.TenLaptop,
+        ctdh.SoLuong,
+        ctdh.DonGia,
+        ctdh.ThanhTien
+
+    FROM DonHang dh
+    JOIN ChiTietDonHang ctdh ON dh.MaDonHang = ctdh.MaDonHang
+    JOIN Laptop l ON ctdh.MaLaptop = l.MaLaptop
+    WHERE dh.MaKH = @MaKH
+    ORDER BY dh.NgayDat DESC
 END
 GO
+---------------------
+CREATE PROCEDURE sp_DonHang_GetAll
+AS
+BEGIN
+    SET NOCOUNT ON;
 
+    SELECT 
+        dh.MaDonHang,
+        dh.NgayDat,
+        dh.TongTien,
+        dh.TrangThai,
+        dh.DiaChiGiaoHang,
+        dh.PhuongThucThanhToan,
+        dh.GhiChu,
+
+        -- Khách hàng (có info)
+        kh.MaKH,
+        kh.TenKH,
+        kh.Email AS EmailKH,
+        kh.DienThoai AS DienThoaiKH,
+
+        -- Nhân viên (chỉ lấy mã)
+        dh.MaNV
+
+    FROM DonHang dh
+    LEFT JOIN KhachHang kh ON dh.MaKH = kh.MaKH
+
+    ORDER BY dh.NgayDat DESC
+END
+GO
 
 /* =========================
    6. ĐÁNH GIÁ
@@ -281,6 +386,59 @@ BEGIN
 
     -- Update tổng tiền
     EXEC sp_PhieuNhap_UpdateTongTien @MaPhieuNhap
+END
+GO
+
+
+CREATE PROC sp_PhieuNhap_GetAll
+AS
+BEGIN
+    SELECT 
+        PN.MaPhieuNhap,
+        PN.NgayNhap,
+        PN.TongTien,
+        PN.GhiChu,
+
+        NCC.TenNCC,
+        NV.TenNV,
+
+        -- Tổng số sản phẩm (sum số lượng)
+        ISNULL(SUM(CTPN.SoLuong), 0) AS TongSoLuongSP
+
+    FROM PhieuNhap PN
+    LEFT JOIN NhaCungCap NCC ON PN.MaNCC = NCC.MaNCC
+    LEFT JOIN NhanVien NV ON PN.MaNV = NV.MaNV
+    LEFT JOIN ChiTietPhieuNhap CTPN ON PN.MaPhieuNhap = CTPN.MaPhieuNhap
+
+    GROUP BY 
+        PN.MaPhieuNhap,
+        PN.NgayNhap,
+        PN.TongTien,
+        PN.GhiChu,
+        NCC.TenNCC,
+        NV.TenNV
+
+    ORDER BY PN.NgayNhap DESC
+END
+GO
+
+CREATE PROC sp_PhieuNhap_GetDetail
+    @MaPhieuNhap NVARCHAR(50)
+AS
+BEGIN
+    SELECT 
+        CTPN.MaCTPN,
+        CTPN.MaLaptop,
+        L.TenLaptop,
+        L.CPU,
+        L.RAM,
+        L.SSD,
+        CTPN.SoLuong,
+        CTPN.GiaNhap,
+        (CTPN.SoLuong * CTPN.GiaNhap) AS ThanhTien
+    FROM ChiTietPhieuNhap CTPN
+    JOIN Laptop L ON CTPN.MaLaptop = L.MaLaptop
+    WHERE CTPN.MaPhieuNhap = @MaPhieuNhap
 END
 GO
 

@@ -17,13 +17,13 @@ namespace API_KhachHang.Controllers
             _gioHangService = gioHangService;
         }
 
-        [HttpGet("{maKH}")]
+        [HttpGet("get-by-kh/{maKH}")]
         public IActionResult GetByKH(string maKH)
         {
             return Ok(_gioHangService.GetByKH(maKH));
         }
 
-        [HttpPost]
+        [HttpPost("add-item")]
         public IActionResult AddItem([FromBody] ChiTietGioHang item)
         {
             bool result = _gioHangService.AddItem(item.MaCTGH, item.MaGioHang, item.MaLaptop, item.SoLuong);
@@ -31,7 +31,7 @@ namespace API_KhachHang.Controllers
             return BadRequest(new { message = "Thêm vào giỏ hàng thất bại" });
         }
 
-        [HttpPut("{maCTGH}")]
+        [HttpPut("update-item/{maCTGH}")]
         public IActionResult UpdateItem(string maCTGH, [FromBody] int soLuong)
         {
             bool result = _gioHangService.UpdateItem(maCTGH, soLuong);
@@ -39,7 +39,7 @@ namespace API_KhachHang.Controllers
             return BadRequest(new { message = "Cập nhật giỏ hàng thất bại" });
         }
 
-        [HttpDelete("{maCTGH}")]
+        [HttpDelete("delete-item/{maCTGH}")]
         public IActionResult DeleteItem(string maCTGH)
         {
             bool result = _gioHangService.DeleteItem(maCTGH);

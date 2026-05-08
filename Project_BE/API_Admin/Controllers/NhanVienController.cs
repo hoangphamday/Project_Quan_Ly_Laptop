@@ -17,13 +17,13 @@ namespace API_Admin.Controllers
             _nhanVienService = nhanVienService;
         }
 
-        [HttpGet]
+        [HttpGet("get-all")]
         public IActionResult GetAll()
         {
             return Ok(_nhanVienService.GetAll());
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("get-by-id/{id}")]
         public IActionResult GetById(string id)
         {
             var result = _nhanVienService.GetById(id);
@@ -31,7 +31,7 @@ namespace API_Admin.Controllers
             return Ok(result);
         }
 
-        [HttpPost]
+        [HttpPost("create")]
         public IActionResult Create([FromBody] NhanVien nv)
         {
             bool result = _nhanVienService.Create(nv);
@@ -39,7 +39,7 @@ namespace API_Admin.Controllers
             return BadRequest(new { message = "Thêm thất bại" });
         }
 
-        [HttpPut]
+        [HttpPut("update")]
         public IActionResult Update([FromBody] NhanVien nv)
         {
             bool result = _nhanVienService.Update(nv);
@@ -47,7 +47,7 @@ namespace API_Admin.Controllers
             return BadRequest(new { message = "Cập nhật thất bại" });
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("delete/{id}")]
         public IActionResult Delete(string id)
         {
             bool result = _nhanVienService.Delete(id);

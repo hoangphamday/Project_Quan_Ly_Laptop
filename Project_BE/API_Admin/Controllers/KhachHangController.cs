@@ -17,13 +17,13 @@ namespace API_Admin.Controllers
             _khachHangService = khachHangService;
         }
 
-        [HttpGet]
+        [HttpGet("get-all")]
         public IActionResult GetAll()
         {
             return Ok(_khachHangService.GetAll());
         }
 
-        [HttpPost]
+        [HttpPost("create")]
         public IActionResult Create([FromBody] KhachHang kh)
         {
             bool result = _khachHangService.Create(kh);

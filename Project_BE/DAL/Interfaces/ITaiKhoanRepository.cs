@@ -9,5 +9,8 @@ namespace DAL.Interfaces
     {
         bool Register(TaiKhoan tk);
         TaiKhoan Login(string username, string password);
+        List<TaiKhoan> GetAll();
+        bool Update(TaiKhoan tk);   // Cập nhật vai trò, trạng thái
+        bool Delete(string maTK);   // Xóa tài khoản
     }
 }

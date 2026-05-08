@@ -54,7 +54,8 @@ namespace DAL
                 "@MaLaptop", laptop.MaLaptop,
                 "@TenLaptop", laptop.TenLaptop,
                 "@Gia", laptop.Gia,
-                "@SoLuong", laptop.SoLuong);
+                "@SoLuong", laptop.SoLuong,
+                "@DuongDanAnh", laptop.DuongDanAnh);   // Gửi đường dẫn ảnh lên proc
             return string.IsNullOrEmpty(msgError);
         }
 

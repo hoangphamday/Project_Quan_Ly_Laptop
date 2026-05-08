@@ -16,7 +16,7 @@ namespace API_NhanVien.Controllers
             _khachHangService = khachHangService;
         }
 
-        [HttpGet]
+        [HttpGet("get-all")]
         public IActionResult GetAll()
         {
             return Ok(_khachHangService.GetAll());

@@ -17,6 +17,12 @@ namespace API_NhanVien.Controllers
             _donHangService = donHangService;
         }
 
+        [HttpGet("get-all")]
+        public IActionResult GetAll()
+        {
+            return Ok(_donHangService.GetAll());
+        }
+
         [HttpPut("{maDonHang}/trangthai")]
         public IActionResult UpdateTrangThai(string maDonHang, [FromBody] string trangThai)
         {

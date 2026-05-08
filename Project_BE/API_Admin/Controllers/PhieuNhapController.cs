@@ -17,7 +17,23 @@ namespace API_Admin.Controllers
             _phieuNhapService = phieuNhapService;
         }
 
-        [HttpPost]
+        /// <summary>GET /api/PhieuNhap — Lấy danh sách tất cả phiếu nhập</summary>
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            var data = _phieuNhapService.GetAll();
+            return Ok(data);
+        }
+
+        /// <summary>GET /api/PhieuNhap/{maPhieuNhap}/detail — Lấy chi tiết phiếu nhập (join Laptop)</summary>
+        [HttpGet("{maPhieuNhap}/detail")]
+        public IActionResult GetDetail(string maPhieuNhap)
+        {
+            var data = _phieuNhapService.GetDetail(maPhieuNhap);
+            return Ok(data);
+        }
+
+        [HttpPost("create")]
         public IActionResult Create([FromBody] PhieuNhap phieuNhap)
         {
             bool result = _phieuNhapService.Create(phieuNhap);
@@ -25,7 +41,7 @@ namespace API_Admin.Controllers
             return BadRequest(new { message = "Thêm thất bại" });
         }
 
-        [HttpPost("AddDetail")]
+        [HttpPost("add-detail")]
         public IActionResult AddDetail([FromBody] ChiTietPhieuNhap chiTiet)
         {
             bool result = _phieuNhapService.AddDetail(chiTiet);

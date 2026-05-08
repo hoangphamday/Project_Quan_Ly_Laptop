@@ -38,6 +38,13 @@ namespace DAL
             return string.IsNullOrEmpty(msgError);
         }
 
+        public List<DonHang> GetAll()
+        {
+            var dt = _dbHelper.ExecuteSProcedureReturnDataTable(out string msgError, "sp_DonHang_GetAll");
+            if (!string.IsNullOrEmpty(msgError) || dt == null) return new List<DonHang>();
+            return dt.ConvertTo<DonHang>().ToList();
+        }
+
         public List<DonHang> GetByKH(string maKH)
         {
             var dt = _dbHelper.ExecuteSProcedureReturnDataTable(out string msgError, "sp_DonHang_GetByKH", "@MaKH", maKH);

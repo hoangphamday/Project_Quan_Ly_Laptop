@@ -1,155 +1,186 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, message, Checkbox } from 'antd';
-import { LockOutlined, UserOutlined, MailOutlined } from '@ant-design/icons';
+import { Form, Input, Button, message, Alert, Card, Typography, Select } from 'antd';
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import { authService } from '../../services/authService';
+import { useAuth } from '../../app/AuthContext';
+
+const { Title, Text } = Typography;
 
 export const Login: React.FC = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [loading, setLoading] = useState(false);
-  const [isLogin, setIsLogin] = useState(true);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [isRegister, setIsRegister] = useState(false);
+  const [form] = Form.useForm();
 
-  const onFinish = (values: any) => {
+  const handleAuth = async (values: any) => {
     setLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      setLoading(false);
-      if (isLogin) {
-        if (values.username === 'admin' && values.password === '12345') {
-          message.success('Đăng nhập thành công!');
-          navigate('/admin');
-        } else {
-          message.error('Tài khoản hoặc mật khẩu không chính xác!');
-        }
+    setErrorMsg(null);
+    try {
+      if (isRegister) {
+        // Gọi API đăng ký
+        await authService.register(values.username, values.password, values.role);
+        message.success('Đăng ký thành công! Vui lòng đăng nhập.');
+        setIsRegister(false);
+        form.resetFields();
       } else {
-        message.success('Đăng ký tài khoản thành công! Vui lòng đăng nhập.');
-        setIsLogin(true);
+        // Đăng nhập
+        const userData = await authService.login(values.username, values.password);
+
+        if (userData && userData.token) {
+          login(userData);
+          message.success(`Đăng nhập thành công! Chào ${userData.tenDangNhap}`);
+
+          // Điều hướng dựa vào Role từ BE trả về
+          const userRole = userData.role || 'KhachHang';
+          if (userRole === 'Admin' || userRole === 'NhanVien') {
+            navigate('/admin');
+          } else {
+            navigate('/');
+          }
+        }
       }
-    }, 1000);
+    } catch (error: any) {
+      if (error?.response?.status >= 500 || error?.response?.status === 404) {
+        setErrorMsg('❌ Không thể kết nối đến Backend hoặc Server đang lỗi. Hãy kiểm tra lại Backend (Port đang dùng).');
+      } else if (error?.response?.data?.message) {
+        setErrorMsg(error.response.data.message);
+      } else if (!error?.response) {
+        setErrorMsg('❌ Không kết nối được tới server. (Vite Proxy lỗi hoặc Backend chưa bật)');
+      } else {
+        setErrorMsg(isRegister ? 'Đăng ký thất bại!' : 'Tài khoản hoặc mật khẩu không chính xác!');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const toggleMode = () => {
+    setIsRegister(!isRegister);
+    setErrorMsg(null);
+    form.resetFields();
   };
 
   return (
-    <div className="min-h-screen flex justify-center items-center bg-slate-100 font-sans p-4">
-      <div className="w-full max-w-md bg-white rounded-xl shadow-md p-8">
-        
-        {/* Header */}
+    <div className="min-h-screen flex items-center justify-center bg-slate-100 p-4 font-sans">
+      <Card className="w-full max-w-md shadow-lg rounded-2xl border-0 overflow-hidden">
         <div className="text-center mb-8">
-          <img 
-            src="/logo.png" 
-            alt="Logo" 
-            className="h-12 w-auto mx-auto mb-4 cursor-pointer" 
-            onClick={() => navigate('/')} 
+          <img
+            src="/logo.png"
+            alt="Logo"
+            className="h-12 w-auto mx-auto mb-4 cursor-pointer"
+            onClick={() => navigate('/')}
+            onError={(e) => ((e.target as HTMLImageElement).style.display = 'none')}
           />
-          <h2 className="text-2xl font-bold text-slate-800">
-            {isLogin ? 'Đăng nhập' : 'Đăng ký tài khoản'}
-          </h2>
-          <p className="text-slate-500 mt-2 text-sm">
-            {isLogin ? 'Chào mừng bạn quay lại hệ thống' : 'Tạo tài khoản để trải nghiệm tốt hơn'}
-          </p>
+          <Title level={3} className="!mb-1 text-slate-800">
+            {isRegister ? 'Đăng ký tài khoản' : 'Đăng nhập'}
+          </Title>
+          <Text className="text-slate-500">
+            {isRegister ? 'Tạo tài khoản mới để tiếp tục' : 'Chào mừng bạn quay lại hệ thống'}
+          </Text>
         </div>
 
-        {/* Form */}
+        {errorMsg && (
+          <Alert
+            message={errorMsg}
+            type="error"
+            showIcon
+            closable
+            onClose={() => setErrorMsg(null)}
+            className="mb-6 rounded-xl text-sm"
+          />
+        )}
+
         <Form
+          form={form}
           name="auth_form"
           layout="vertical"
-          onFinish={onFinish}
+          onFinish={handleAuth}
           size="large"
           requiredMark={false}
+          initialValues={{ role: 'KhachHang' }}
         >
-          {!isLogin && (
-            <Form.Item
-              name="fullName"
-              rules={[{ required: true, message: 'Vui lòng nhập họ tên!' }]}
-            >
-              <Input 
-                prefix={<UserOutlined className="text-slate-400 mr-2" />} 
-                placeholder="Họ và tên" 
-                className="h-12 rounded-lg"
-              />
-            </Form.Item>
-          )}
-
           <Form.Item
             name="username"
-            rules={[{ required: true, message: 'Vui lòng nhập tài khoản!' }]}
+            label={<span className="text-slate-600 font-medium h-auto">Tên đăng nhập</span>}
+            rules={[{ required: true, message: 'Vui lòng nhập tên đăng nhập!' }]}
           >
-            <Input 
-              prefix={<MailOutlined className="text-slate-400 mr-2" />} 
-              placeholder={isLogin ? "Tên đăng nhập / Email (VD: admin)" : "Email"} 
-              className="h-12 rounded-lg"
+            <Input
+              prefix={<UserOutlined className="text-slate-400" />}
+              placeholder="Nhập tên đăng nhập"
+              className="rounded-lg h-11"
             />
           </Form.Item>
 
           <Form.Item
             name="password"
+            label={<span className="text-slate-600 font-medium h-auto">Mật khẩu</span>}
             rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]}
           >
-            <Input.Password 
-              prefix={<LockOutlined className="text-slate-400 mr-2" />}
-              placeholder="Mật khẩu (VD: 12345)" 
-              className="h-12 rounded-lg"
+            <Input.Password
+              prefix={<LockOutlined className="text-slate-400" />}
+              placeholder="Nhập mật khẩu"
+              className="rounded-lg h-11"
             />
           </Form.Item>
 
-          {!isLogin && (
+          {isRegister && (
             <Form.Item
-              name="confirmPassword"
-              dependencies={['password']}
-              rules={[
-                { required: true, message: 'Vui lòng xác nhận mật khẩu!' },
-                ({ getFieldValue }) => ({
-                  validator(_, value) {
-                    if (!value || getFieldValue('password') === value) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject(new Error('Mật khẩu không khớp!'));
-                  },
-                }),
-              ]}
+              name="role"
+              label={<span className="text-slate-600 font-medium h-auto">Bạn là:</span>}
+              rules={[{ required: true, message: 'Vui lòng chọn loại tài khoản!' }]}
             >
-              <Input.Password 
-                prefix={<LockOutlined className="text-slate-400 mr-2" />}
-                placeholder="Xác nhận mật khẩu" 
-                className="h-12 rounded-lg"
-              />
+              <Select className="h-11">
+                <Select.Option value="KhachHang">Khách hàng</Select.Option>
+                <Select.Option value="NhanVien">Nhân viên</Select.Option>
+                <Select.Option value="Admin">Quản trị viên</Select.Option>
+              </Select>
             </Form.Item>
           )}
 
-          {isLogin && (
-            <div className="flex items-center justify-between mb-6">
-              <Form.Item name="remember" valuePropName="checked" noStyle>
-                <Checkbox className="text-slate-600">Ghi nhớ tôi</Checkbox>
-              </Form.Item>
-              <a className="text-blue-600 hover:text-blue-500 font-medium text-sm" href="#">
-                Quên mật khẩu?
-              </a>
-            </div>
-          )}
-
-          <Form.Item className={!isLogin ? "mt-6 mb-4" : "mb-4"}>
-            <Button 
-              type="primary" 
-              htmlType="submit" 
+          <Form.Item className="mt-8 mb-4">
+            <Button
+              type="primary"
+              htmlType="submit"
               loading={loading}
-              className="w-full h-12 rounded-lg bg-blue-600 hover:bg-blue-500 font-semibold"
+              className="w-full h-12 rounded-lg font-semibold bg-blue-600 hover:bg-blue-700"
             >
-              {isLogin ? 'Đăng nhập' : 'Đăng ký'}
+              {isRegister ? 'Đăng ký ngay' : 'Đăng nhập'}
             </Button>
           </Form.Item>
-
-          <div className="text-center mt-6">
-            <span className="text-slate-600 text-sm">
-              {isLogin ? 'Chưa có tài khoản?' : 'Đã có tài khoản?'}
-            </span>
-            <button 
-              type="button"
-              onClick={() => setIsLogin(!isLogin)}
-              className="ml-2 text-blue-600 font-semibold hover:text-blue-500 border-none bg-transparent cursor-pointer"
-            >
-              {isLogin ? 'Đăng ký ngay' : 'Đăng nhập'}
-            </button>
-          </div>
         </Form>
-        
+
+        <div className="text-center text-sm text-slate-500 mt-4">
+          {isRegister ? (
+            <span>
+              Đã có tài khoản?{' '}
+              <button 
+                type="button" 
+                onClick={toggleMode} 
+                className="text-blue-600 hover:text-blue-700 font-medium cursor-pointer bg-transparent border-none p-0"
+              >
+                Đăng nhập
+              </button>
+            </span>
+          ) : (
+            <span>
+              Chưa có tài khoản?{' '}
+              <button 
+                type="button" 
+                onClick={toggleMode} 
+                className="text-blue-600 hover:text-blue-700 font-medium cursor-pointer bg-transparent border-none p-0"
+              >
+                Đăng ký ngay
+              </button>
+            </span>
+          )}
+        </div>
+      </Card>
+      
+      <div className="fixed bottom-4 text-center w-full text-slate-400 text-xs px-4 pointer-events-none">
+        Nếu không kết nối được, hãy đảm bảo Backend đang bật đúng Port (ví dụ: https://localhost:7181)
       </div>
     </div>
   );

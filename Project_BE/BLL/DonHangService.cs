@@ -24,6 +24,11 @@ namespace BLL
             return _repo.Create(donHang);
         }
 
+        public List<DonHang> GetAll()
+        {
+            return _repo.GetAll();
+        }
+
         public List<DonHang> GetByKH(string maKH)
         {
             return _repo.GetByKH(maKH);

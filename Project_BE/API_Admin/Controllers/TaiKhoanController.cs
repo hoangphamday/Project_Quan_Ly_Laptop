@@ -18,6 +18,7 @@ namespace API_Admin.Controllers
         }
 
         [HttpPost("register")]
+        [AllowAnonymous]
         public IActionResult Register([FromBody] TaiKhoan tk)
         {
             bool result = _taiKhoanService.Register(tk);
@@ -34,6 +35,30 @@ namespace API_Admin.Controllers
             var result = _taiKhoanService.Login(tk.TenDangNhap, tk.MatKhau);
             if (result != null) return Ok(result);
             return Unauthorized(new { message = "Tài khoản hoặc mật khẩu không chính xác" });
+        }
+
+        [HttpGet("get-all")]
+        public IActionResult GetAll()
+        {
+            return Ok(_taiKhoanService.GetAll());
+        }
+
+        // Cập nhật vai trò và trạng thái tài khoản
+        [HttpPut("update")]
+        public IActionResult Update([FromBody] TaiKhoan tk)
+        {
+            bool result = _taiKhoanService.Update(tk);
+            if (result) return Ok(new { message = "Cập nhật tài khoản thành công" });
+            return BadRequest(new { message = "Cập nhật thất bại" });
+        }
+
+        // Xóa tài khoản
+        [HttpDelete("delete/{maTK}")]
+        public IActionResult Delete(string maTK)
+        {
+            bool result = _taiKhoanService.Delete(maTK);
+            if (result) return Ok(new { message = "Xóa tài khoản thành công" });
+            return BadRequest(new { message = "Xóa thất bại" });
         }
     }
 }
