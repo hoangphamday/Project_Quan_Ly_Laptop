@@ -120,7 +120,7 @@
               "RelativeDocumentMoniker": "Models\\Laptop.cs",
               "ToolTip": "D:\\CN WED\\Project_Laptop\\Project_BE\\Models\\Laptop.cs",
               "RelativeToolTip": "Models\\Laptop.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAnAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-05-07T16:30:55.922Z",
               "EditorCaption": ""
@@ -135,8 +135,7 @@
               "RelativeToolTip": "API_KhachHang\\Controllers\\DonHangController.cs",
               "ViewState": "AgIAAAoAAAAAAAAAAAA5wBQAAAA/AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-07T16:08:53.09Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-07T16:08:53.09Z"
             },
             {
               "$type": "Document",
@@ -208,8 +207,7 @@
               "RelativeToolTip": "API_NhanVien\\Controllers\\KhachHangController.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAlAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-15T17:15:08.758Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-15T17:15:08.758Z"
             },
             {
               "$type": "Document",

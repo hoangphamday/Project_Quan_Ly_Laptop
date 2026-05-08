@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Card, Row, Col, Table, Tag, Button, Typography, Space, Spin, DatePicker, Divider, Empty } from 'antd';
+import { useNavigate } from 'react-router-dom';
+import { Card, Row, Col, Table, Tag, Button, Typography, Spin, DatePicker, Divider, Empty } from 'antd';
 import {
   ArrowUpOutlined,
   ShoppingOutlined,
@@ -13,9 +14,9 @@ import {
   RiseOutlined,
 } from '@ant-design/icons';
 import {
-  AreaChart, Area, BarChart, Bar,
+  AreaChart, Area,
   XAxis, YAxis, CartesianGrid, Tooltip as ReTooltip,
-  ResponsiveContainer, Legend,
+  ResponsiveContainer,
 } from 'recharts';
 import dayjs, { type Dayjs } from 'dayjs';
 import { laptopService } from '../../services/laptopService';
@@ -33,9 +34,10 @@ const fmt = (val: number) =>
 const fmtCompact = (val: number) =>
   new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', notation: 'compact', compactDisplay: 'short' }).format(val);
 
-// Dữ liệu mẫu cho bảng chi tiết theo ngày (sẽ dùng khi API trả về)
-function buildMockDayData(orders: DonHang[]) {
-  const map: Record<string, { ngay: string; doanhThu: number; soDon: number }> = {};
+type DayRow = { ngay: string; doanhThu: number; soDon: number };
+
+function buildMockDayData(orders: DonHang[]): DayRow[] {
+  const map: Record<string, DayRow> = {};
   orders.forEach((o) => {
     if (!o.ngayDat) return;
     const d = new Date(o.ngayDat).toLocaleDateString('vi-VN');
@@ -47,6 +49,8 @@ function buildMockDayData(orders: DonHang[]) {
 }
 
 export const Dashboard: React.FC = () => {
+  const navigate = useNavigate();
+
   const [loading, setLoading] = useState(false);
   const [revenueLoading, setRevenueLoading] = useState(false);
 
@@ -56,11 +60,11 @@ export const Dashboard: React.FC = () => {
   const [orders, setOrders] = useState<DonHang[]>([]);
 
   // Revenue section
-  const [dateRange, setDateRange] = useState<[Dayjs, Dayjs]>([
+  const [dateRange, setDateRange] = useState<[Dayjs, Dayjs] | null>([
     dayjs().subtract(29, 'day'), dayjs(),
   ]);
   const [thongKe, setThongKe] = useState<ThongKeDoanhThu[]>([]);
-  const [dayData, setDayData] = useState<{ ngay: string; doanhThu: number; soDon: number }[]>([]);
+  const [dayData, setDayData] = useState<DayRow[]>([]);
 
   // Derived stats
   const tongDoanhThu = dayData.reduce((s, r) => s + r.doanhThu, 0);
@@ -71,7 +75,7 @@ export const Dashboard: React.FC = () => {
   // Chart data from thongKe or dayData
   const chartData =
     thongKe.length > 0
-      ? thongKe.map((t, i) => ({ name: `T${i + 1}`, doanhThu: t.tongDoanhThu || 0 }))
+      ? thongKe.map((t) => ({ name: `T${t.thang}/${t.nam}`, doanhThu: t.tongDoanhThu || 0 }))
       : dayData.map((d) => ({ name: d.ngay, doanhThu: d.doanhThu }));
 
   const fallbackChart = [
@@ -132,7 +136,8 @@ export const Dashboard: React.FC = () => {
   }, [orders]);
 
   useEffect(() => { fetchOverview(); }, [fetchOverview]);
-  useEffect(() => { if (orders.length > 0) fetchRevenue(dateRange); }, [orders]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { if (orders.length > 0 && dateRange) fetchRevenue(dateRange); }, [orders]);
 
   const handleSearch = () => { if (dateRange) fetchRevenue(dateRange); };
 
@@ -150,7 +155,7 @@ export const Dashboard: React.FC = () => {
       key: 'doanhThu',
       align: 'right' as const,
       render: (v: number) => <span className="font-bold text-blue-600">{fmt(v)}</span>,
-      sorter: (a: any, b: any) => a.doanhThu - b.doanhThu,
+      sorter: (a: DayRow, b: DayRow) => a.doanhThu - b.doanhThu,
     },
     {
       title: 'Số đơn hàng',
@@ -282,8 +287,9 @@ export const Dashboard: React.FC = () => {
           <Button
             icon={<FileExcelOutlined />}
             className="h-10 rounded-lg border-emerald-400 text-emerald-600 hover:bg-emerald-50"
+            disabled={!dateRange}
             onClick={() => {
-              // Xuất CSV đơn giản
+              if (!dateRange) return;
               const headers = 'Ngày,Doanh thu,Số đơn hàng\n';
               const rows = dayData.map((r) => `${r.ngay},${r.doanhThu},${r.soDon}`).join('\n');
               const blob = new Blob(['\uFEFF' + headers + rows], { type: 'text/csv;charset=utf-8;' });
@@ -353,10 +359,19 @@ export const Dashboard: React.FC = () => {
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
                   <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 12 }} dy={10} />
-                  <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 11 }} tickFormatter={(v) => fmtCompact(v)} dx={-4} width={80} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fill: '#64748b', fontSize: 11 }} tickFormatter={(v: number) => fmtCompact(v)} dx={-4} width={80} />
                   <ReTooltip
                     contentStyle={{ borderRadius: '10px', border: 'none', boxShadow: '0 8px 24px rgba(0,0,0,0.12)' }}
-                    formatter={(value: any) => [fmt(Number(value)), 'Doanh thu']}
+                    formatter={(value: any) => {
+                      // Bước 1: Chuyển đổi giá trị sang dạng số (đề phòng thư viện Recharts trả về dạng chuỗi hoặc kiểu khác)
+                      const giaTriSo = Number(value);
+                      
+                      // Bước 2: Dùng hàm fmt đã viết ở trên để định dạng số thành tiền tệ VNĐ (ví dụ: 1.000.000 ₫)
+                      const giaTriDaDinhDang = fmt(giaTriSo);
+                      
+                      // Bước 3: Trả về một mảng chứa [Giá trị hiển thị, Tên nhãn hiển thị]
+                      return [giaTriDaDinhDang, 'Doanh thu'];
+                    }}
                   />
                   <Area type="monotone" dataKey="doanhThu" stroke="#1677ff" strokeWidth={2.5} fillOpacity={1} fill="url(#gradDT)" dot={false} activeDot={{ r: 5, strokeWidth: 2 }} />
                 </AreaChart>
@@ -370,15 +385,15 @@ export const Dashboard: React.FC = () => {
           <div>
             <p className="text-sm font-semibold text-slate-600 mb-3">📋 Bảng chi tiết theo ngày</p>
             {dayData.length > 0 ? (
-              <Table
+              <Table<DayRow>
                 columns={detailColumns}
                 dataSource={dayData.map((d, i) => ({ ...d, key: i }))}
                 pagination={{ pageSize: 7, size: 'small' }}
                 size="small"
                 className="custom-table"
                 summary={(pageData) => {
-                  const totalDT = pageData.reduce((s, r) => s + (r as any).doanhThu, 0);
-                  const totalSD = pageData.reduce((s, r) => s + (r as any).soDon, 0);
+                  const totalDT = pageData.reduce((s, r) => s + r.doanhThu, 0);
+                  const totalSD = pageData.reduce((s, r) => s + r.soDon, 0);
                   return (
                     <Table.Summary.Row className="bg-blue-50 font-bold">
                       <Table.Summary.Cell index={0}>
@@ -406,7 +421,7 @@ export const Dashboard: React.FC = () => {
         bordered={false}
         className="shadow-sm rounded-2xl"
         title={<span className="font-semibold text-slate-800">Đơn hàng gần đây</span>}
-        extra={<Button type="link" className="p-0 text-blue-600" onClick={() => window.location.href = '/admin/orders'}>Xem tất cả</Button>}
+        extra={<Button type="link" className="p-0 text-blue-600" onClick={() => navigate('/admin/orders')}>Xem tất cả</Button>}
       >
         <Table
           columns={recentCols}
